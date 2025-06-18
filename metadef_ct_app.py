@@ -9,7 +9,7 @@ st.title("🧠 MetaDef CT")
 st.markdown("עוזר אישי לרדיולוגים לבחירת פרוטוקול CT לפי שאלה קלינית")
 
 # API Key input
-openai_api_key = st.text_input("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", type="password")
+openai_api_key = st.text_input("🔑 הזן מפתח API של OpenAI", type="password")
 
 # File links (just for internal logic)
 st.markdown("🔗 **הקבצים שעליהם מבוססת האפליקציה:**")
