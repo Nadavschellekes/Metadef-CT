@@ -5,7 +5,7 @@ import os
 st.set_page_config(page_title="MetaDef CT - עוזר פרוטוקולי CT", page_icon="🧠")
 
 st.title("🧠 MetaDef CT")
-st.markdown("עוזר אישי לרדיולוגים לבחירת פרוטוקול CT לפי שאלה קלינית")
+st.markdown("עוזר אישי לרדיולוגים לבחירת פרוטוקול")
 
 # Load API key securely from secrets
 client = OpenAI(api_key=st.secrets["openai"]["api_key"])
