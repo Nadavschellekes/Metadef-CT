@@ -1,6 +1,5 @@
-
 import streamlit as st
-import openai
+from openai import OpenAI
 import os
 
 st.set_page_config(page_title="MetaDef CT - עוזר פרוטוקולי CT", page_icon="🧠")
@@ -8,10 +7,10 @@ st.set_page_config(page_title="MetaDef CT - עוזר פרוטוקולי CT", pag
 st.title("🧠 MetaDef CT")
 st.markdown("עוזר אישי לרדיולוגים לבחירת פרוטוקול CT לפי שאלה קלינית")
 
-# API Key input
-openai_api_key = st.text_input("🔑 הזן מפתח API של OpenAI", type="password")
+# Load API key securely from secrets
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
-# File links (just for internal logic)
+# Display reference files
 st.markdown("🔗 **הקבצים שעליהם מבוססת האפליקציה:**")
 st.markdown("- פרוטוקולים סיטי בטן 2024-02")
 st.markdown("- פרוטוקולים נפוצים")
@@ -21,12 +20,9 @@ st.markdown("- קובץ Padlet")
 clinical_question = st.text_area("📝 הזן שאלה קלינית בעברית", height=150)
 
 if st.button("📡 שלח וקבל פרוטוקול"):
-    if not openai_api_key:
-        st.error("יש להזין מפתח API של OpenAI.")
-    elif not clinical_question.strip():
+    if not clinical_question.strip():
         st.warning("יש להזין שאלה קלינית.")
     else:
-        # Compose the system prompt from user instructions
         system_prompt = """אתה GPT עוזר אישי לרדיולוגים לקביעת פרוטוקולי CT מדויקים לפי שאלה קלינית.
 אתה פועל בעברית בלבד, ומסתמך על שלושה מסמכים מקצועיים:
 1. חוברת “פרוטוקולים סיטי בטן 2024-02”
@@ -55,10 +51,8 @@ if st.button("📡 שלח וקבל פרוטוקול"):
 
         user_prompt = f"שאלה קלינית: {clinical_question.strip()}"
 
-        # Call OpenAI API
         try:
-            openai.api_key = openai_api_key
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -66,7 +60,7 @@ if st.button("📡 שלח וקבל פרוטוקול"):
                 ],
                 temperature=0.4
             )
-            reply = response['choices'][0]['message']['content']
+            reply = response.choices[0].message.content
             st.markdown("### 📋 תשובת GPT:")
             st.markdown(reply)
         except Exception as e:
